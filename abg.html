@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ABG Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="assets/js/abg.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>ABG Analytical Engine</h1>
+
+<div class="card">
+
+<h3>Enter Values</h3>
+
+<input id="ph" placeholder="pH">
+<input id="pco2" placeholder="pCO₂ (mmHg)">
+<input id="hco3" placeholder="HCO₃ (mmol/L)">
+<input id="na" placeholder="Na (mmol/L)">
+<input id="cl" placeholder="Cl (mmol/L)">
+<input id="albumin" placeholder="Albumin (g/dL)">
+
+<button onclick="analyzeABG()">Analyze</button>
+
+</div>
+
+<div class="card">
+<h3>Result</h3>
+<div id="output"></div>
+</div>
+
+<div class="card">
+<h3>Graph</h3>
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+
+</body>
+</html>
