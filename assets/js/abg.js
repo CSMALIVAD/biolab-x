@@ -7,9 +7,9 @@ return "#22c55e";
 }
 
 function severityGrade(ph){
-if(ph < 7.1 || ph > 7.6) return "Severe";
-if(ph < 7.2 || ph > 7.55) return "Moderate";
-return "Mild";
+if(ph < 7.1 || ph > 7.6) return {text:"Severe",color:"#ef4444"};
+if(ph < 7.2 || ph > 7.55) return {text:"Moderate",color:"#f59e0b"};
+return {text:"Mild",color:"#22c55e"};
 }
 
 function analyzeABG(){
@@ -26,9 +26,7 @@ alert("Please enter all required values.");
 return;
 }
 
-if(isNaN(albumin)){
-albumin = 4;
-}
+if(isNaN(albumin)){ albumin = 4; }
 
 /* Core Calculations */
 let ag = na - (cl + hco3);
@@ -38,44 +36,33 @@ let deltaRatio = (correctedAG - 12) / (24 - hco3);
 
 /* Primary Disorder */
 let primary = "Mixed or Compensated";
-if(ph < 7.35 && hco3 < 22){
-primary = "Metabolic Acidosis";
-}
-else if(ph < 7.35 && pco2 > 45){
-primary = "Respiratory Acidosis";
-}
-else if(ph > 7.45 && hco3 > 26){
-primary = "Metabolic Alkalosis";
-}
-else if(ph > 7.45 && pco2 < 35){
-primary = "Respiratory Alkalosis";
-}
+if(ph < 7.35 && hco3 < 22){ primary = "Metabolic Acidosis"; }
+else if(ph < 7.35 && pco2 > 45){ primary = "Respiratory Acidosis"; }
+else if(ph > 7.45 && hco3 > 26){ primary = "Metabolic Alkalosis"; }
+else if(ph > 7.45 && pco2 < 35){ primary = "Respiratory Alkalosis"; }
 
 /* Compensation */
 let compensation = "Appropriate";
 if(primary === "Metabolic Acidosis"){
-if(pco2 < winterExpected - 2){
-compensation = "Concurrent Respiratory Alkalosis";
-}
-else if(pco2 > winterExpected + 2){
-compensation = "Concurrent Respiratory Acidosis";
-}
+if(pco2 < winterExpected - 2){ compensation = "Concurrent Respiratory Alkalosis"; }
+else if(pco2 > winterExpected + 2){ compensation = "Concurrent Respiratory Acidosis"; }
 }
 
 /* Delta Interpretation */
 let deltaInterpretation = "";
-if(deltaRatio < 0.4){
-deltaInterpretation = "Normal Anion Gap Acidosis Present";
-}
-else if(deltaRatio <= 2){
-deltaInterpretation = "Pure High Anion Gap Acidosis";
-}
-else{
-deltaInterpretation = "Concurrent Metabolic Alkalosis";
-}
+if(deltaRatio < 0.4){ deltaInterpretation = "Normal Anion Gap Acidosis Present"; }
+else if(deltaRatio <= 2){ deltaInterpretation = "Pure High Anion Gap Acidosis"; }
+else{ deltaInterpretation = "Concurrent Metabolic Alkalosis"; }
 
 /* Severity */
 let severity = severityGrade(ph);
+
+/* Clinical Interpretation Paragraph */
+let interpretation = `
+This pattern is consistent with ${primary}. 
+Compensation appears ${compensation.toLowerCase()}. 
+The delta ratio suggests: ${deltaInterpretation}.
+`;
 
 /* Colors */
 let phColor = getColor(ph,7.35,7.45);
@@ -83,21 +70,24 @@ let pco2Color = getColor(pco2,35,45);
 let hco3Color = getColor(hco3,22,26);
 let agColor = getColor(ag,8,12);
 
-/* Report Layout */
+/* Output */
 let outputHTML = `
-<div style="background:#0f172a;padding:15px;border-radius:10px;margin-bottom:15px;">
-<div style="font-size:22px;color:#38bdf8;font-weight:bold;">${primary}</div>
-<div style="margin-top:5px;">Severity: <b>${severity}</b></div>
-<div>Compensation: ${compensation}</div>
-<div>Delta Ratio: ${deltaRatio.toFixed(2)}</div>
-<div>${deltaInterpretation}</div>
+<div style="background:${severity.color};padding:15px;border-radius:10px;margin-bottom:15px;color:white;">
+<div style="font-size:22px;font-weight:bold;">${primary}</div>
+<div>Severity: ${severity.text}</div>
 </div>
 
-<div style="background:#1e293b;padding:15px;border-radius:10px;">
-<p>pH: <span style="color:${phColor};font-weight:bold;">${ph}</span> (7.35–7.45)</p>
-<p>pCO₂: <span style="color:${pco2Color};font-weight:bold;">${pco2}</span> (35–45)</p>
-<p>HCO₃: <span style="color:${hco3Color};font-weight:bold;">${hco3}</span> (22–26)</p>
-<p>Anion Gap: <span style="color:${agColor};font-weight:bold;">${ag.toFixed(2)}</span> (8–12)</p>
+<div style="background:#1e293b;padding:15px;border-radius:10px;margin-bottom:15px;">
+<p><b>Compensation:</b> ${compensation}</p>
+<p><b>Delta Ratio:</b> ${deltaRatio.toFixed(2)}</p>
+<p><b>Interpretation:</b> ${interpretation}</p>
+</div>
+
+<div style="background:#0f172a;padding:15px;border-radius:10px;">
+<p>pH: <span style="color:${phColor};font-weight:bold;">${ph}</span></p>
+<p>pCO₂: <span style="color:${pco2Color};font-weight:bold;">${pco2}</span></p>
+<p>HCO₃: <span style="color:${hco3Color};font-weight:bold;">${hco3}</span></p>
+<p>Anion Gap: <span style="color:${agColor};font-weight:bold;">${ag.toFixed(2)}</span></p>
 <p>Corrected AG: ${correctedAG.toFixed(2)}</p>
 </div>
 `;
@@ -105,9 +95,7 @@ let outputHTML = `
 document.getElementById("output").innerHTML = outputHTML;
 
 /* Chart */
-if(chartInstance !== null){
-chartInstance.destroy();
-}
+if(chartInstance !== null){ chartInstance.destroy(); }
 
 let ctx = document.getElementById("chart").getContext("2d");
 
@@ -123,9 +111,7 @@ borderColor:'#38bdf8',
 borderWidth:2
 }]
 },
-options:{
-plugins:{legend:{labels:{color:'white'}}}
-}
+options:{plugins:{legend:{labels:{color:'white'}}}}
 });
 
 }
