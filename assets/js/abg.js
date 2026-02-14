@@ -1,9 +1,9 @@
 let chartInstance = null;
 
 function getColor(value, low, high){
-if(value < low) return "#ef4444";     // red
-if(value > high) return "#f59e0b";    // orange
-return "#22c55e";                     // green
+if(value < low) return "#ef4444";
+if(value > high) return "#f59e0b";
+return "#22c55e";
 }
 
 function analyzeABG(){
@@ -24,13 +24,14 @@ if(isNaN(albumin)){
 albumin = 4;
 }
 
-/* Calculations */
+/* Core Calculations */
 let ag = na - (cl + hco3);
 let correctedAG = ag + 2.5 * (4 - albumin);
+let winterExpected = (1.5 * hco3) + 8;
+let deltaRatio = (correctedAG - 12) / (24 - hco3);
 
 /* Primary Disorder */
 let primary = "Mixed or Compensated";
-
 if(ph < 7.35 && hco3 < 22){
 primary = "Metabolic Acidosis";
 }
@@ -44,7 +45,31 @@ else if(ph > 7.45 && pco2 < 35){
 primary = "Respiratory Alkalosis";
 }
 
-/* Reference Ranges (Tietz Adult) */
+/* Compensation Check */
+let compensation = "Appropriate";
+
+if(primary === "Metabolic Acidosis"){
+if(pco2 < winterExpected - 2){
+compensation = "Concurrent Respiratory Alkalosis";
+}
+else if(pco2 > winterExpected + 2){
+compensation = "Concurrent Respiratory Acidosis";
+}
+}
+
+/* Delta Ratio Interpretation */
+let deltaInterpretation = "";
+if(deltaRatio < 0.4){
+deltaInterpretation = "Normal Anion Gap Acidosis Present";
+}
+else if(deltaRatio <= 2){
+deltaInterpretation = "Pure High Anion Gap Acidosis";
+}
+else{
+deltaInterpretation = "Concurrent Metabolic Alkalosis";
+}
+
+/* Reference Colors */
 let phColor = getColor(ph,7.35,7.45);
 let pco2Color = getColor(pco2,35,45);
 let hco3Color = getColor(hco3,22,26);
@@ -56,10 +81,15 @@ let outputHTML = `
 ${primary}
 </div>
 
-<p>pH: <span style="color:${phColor};font-weight:bold;">${ph}</span> (Ref: 7.35–7.45)</p>
-<p>pCO₂: <span style="color:${pco2Color};font-weight:bold;">${pco2}</span> (Ref: 35–45)</p>
-<p>HCO₃: <span style="color:${hco3Color};font-weight:bold;">${hco3}</span> (Ref: 22–26)</p>
-<p>Anion Gap: <span style="color:${agColor};font-weight:bold;">${ag.toFixed(2)}</span> (Ref: 8–12)</p>
+<p><b>Compensation:</b> ${compensation}</p>
+<p><b>Delta Ratio:</b> ${deltaRatio.toFixed(2)}</p>
+<p><b>Delta Interpretation:</b> ${deltaInterpretation}</p>
+<hr>
+
+<p>pH: <span style="color:${phColor};font-weight:bold;">${ph}</span> (7.35–7.45)</p>
+<p>pCO₂: <span style="color:${pco2Color};font-weight:bold;">${pco2}</span> (35–45)</p>
+<p>HCO₃: <span style="color:${hco3Color};font-weight:bold;">${hco3}</span> (22–26)</p>
+<p>Anion Gap: <span style="color:${agColor};font-weight:bold;">${ag.toFixed(2)}</span> (8–12)</p>
 <p>Corrected AG: ${correctedAG.toFixed(2)}</p>
 `;
 
