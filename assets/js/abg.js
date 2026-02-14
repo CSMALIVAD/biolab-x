@@ -1,5 +1,11 @@
 let chartInstance = null;
 
+function getColor(value, low, high){
+if(value < low) return "#ef4444";     // red
+if(value > high) return "#f59e0b";    // orange
+return "#22c55e";                     // green
+}
+
 function analyzeABG(){
 
 let ph = parseFloat(document.getElementById("ph").value);
@@ -22,7 +28,7 @@ albumin = 4;
 let ag = na - (cl + hco3);
 let correctedAG = ag + 2.5 * (4 - albumin);
 
-/* Determine Primary Disorder */
+/* Primary Disorder */
 let primary = "Mixed or Compensated";
 
 if(ph < 7.35 && hco3 < 22){
@@ -38,11 +44,26 @@ else if(ph > 7.45 && pco2 < 35){
 primary = "Respiratory Alkalosis";
 }
 
-/* Show Output */
-document.getElementById("output").innerHTML =
-"<b>Primary Disorder:</b> " + primary + "<br><br>" +
-"Anion Gap: " + ag.toFixed(2) + "<br>" +
-"Corrected AG: " + correctedAG.toFixed(2);
+/* Reference Ranges (Tietz Adult) */
+let phColor = getColor(ph,7.35,7.45);
+let pco2Color = getColor(pco2,35,45);
+let hco3Color = getColor(hco3,22,26);
+let agColor = getColor(ag,8,12);
+
+/* Output */
+let outputHTML = `
+<div style="font-size:20px;color:#38bdf8;font-weight:bold;margin-bottom:10px;">
+${primary}
+</div>
+
+<p>pH: <span style="color:${phColor};font-weight:bold;">${ph}</span> (Ref: 7.35–7.45)</p>
+<p>pCO₂: <span style="color:${pco2Color};font-weight:bold;">${pco2}</span> (Ref: 35–45)</p>
+<p>HCO₃: <span style="color:${hco3Color};font-weight:bold;">${hco3}</span> (Ref: 22–26)</p>
+<p>Anion Gap: <span style="color:${agColor};font-weight:bold;">${ag.toFixed(2)}</span> (Ref: 8–12)</p>
+<p>Corrected AG: ${correctedAG.toFixed(2)}</p>
+`;
+
+document.getElementById("output").innerHTML = outputHTML;
 
 /* Chart */
 if(chartInstance !== null){
@@ -59,10 +80,13 @@ datasets:[{
 label:'ABG Parameters',
 data:[ph,pco2,hco3],
 backgroundColor:'rgba(56,189,248,0.3)',
-borderColor:'#38bdf8'
+borderColor:'#38bdf8',
+borderWidth:2
 }]
+},
+options:{
+plugins:{legend:{labels:{color:'white'}}}
 }
 });
 
 }
-
