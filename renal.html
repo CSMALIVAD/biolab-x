@@ -2,61 +2,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Renal Elite Engine</title>
+<title>Renal Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link rel="stylesheet" href="assets/css/style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script defer src="assets/js/renal.js"></script>
-
 </head>
 
 <body>
 
-<div class="container">
+<h1>Renal Engine Test</h1>
 
-<h1>Renal Elite Analytical Engine</h1>
+<input id="age" placeholder="Age">
+<input id="creatinine" placeholder="Creatinine">
 
-<div class="card">
+<button onclick="analyzeRenal()">Test Calculate</button>
 
-<h3>Patient Data</h3>
-
-<input id="age" placeholder="Age (years)">
-<input id="weight" placeholder="Weight (kg)">
-<select id="sex">
-<option value="male">Male</option>
-<option value="female">Female</option>
-</select>
-
-<h3>Creatinine</h3>
-
-<input id="creatinine" placeholder="Creatinine value">
-<select id="creatUnit">
-<option value="mgdl">mg/dL</option>
-<option value="umol">µmol/L</option>
-</select>
-
-<h3>Additional Labs (Optional)</h3>
-
-<input id="bun" placeholder="BUN (mg/dL)">
-<input id="sodium" placeholder="Sodium (mmol/L)">
-<input id="glucose" placeholder="Glucose (mg/dL)">
-
-<button onclick="analyzeRenal()">Calculate Renal Panel</button>
-
-</div>
-
-<div class="card">
-<h3>Renal Report</h3>
 <div id="renalOutput"></div>
-</div>
-
-<div class="card">
-<h3>eGFR Comparison</h3>
-<canvas id="renalChart"></canvas>
-</div>
-
-</div>
 
 </body>
 </html>
