@@ -2,21 +2,49 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Renal Test</title>
+<title>Renal Super Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script defer src="assets/js/renal.js"></script>
+
 </head>
 
 <body>
 
-<h1>Renal Engine Test</h1>
+<div class="container">
 
-<input id="age" placeholder="Age">
+<h1>Renal Super World-Class Calculator</h1>
+
+<div class="card">
+
+<input id="age" placeholder="Age (years)">
+<input id="weight" placeholder="Weight (kg)">
+<select id="sex">
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
+
 <input id="creatinine" placeholder="Creatinine">
+<select id="creatUnit">
+<option value="mgdl">mg/dL</option>
+<option value="umol">µmol/L</option>
+</select>
 
-<button onclick="analyzeRenal()">Test Calculate</button>
+<button onclick="analyzeRenal()">Calculate</button>
 
+</div>
+
+<div class="card">
 <div id="renalOutput"></div>
+</div>
+
+<div class="card">
+<canvas id="renalChart"></canvas>
+</div>
+
+</div>
 
 </body>
 </html>
