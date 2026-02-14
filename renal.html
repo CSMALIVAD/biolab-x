@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Renal Engine</title>
+<title>Renal Elite Engine</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="assets/css/style.css">
@@ -15,37 +15,44 @@
 
 <div class="container">
 
-<h1>Renal Function Engine</h1>
+<h1>Renal Elite Analytical Engine</h1>
 
 <div class="card">
 
+<h3>Patient Data</h3>
+
 <input id="age" placeholder="Age (years)">
 <input id="weight" placeholder="Weight (kg)">
-
 <select id="sex">
 <option value="male">Male</option>
 <option value="female">Female</option>
 </select>
 
-<input id="creatinine" placeholder="Creatinine">
+<h3>Creatinine</h3>
+
+<input id="creatinine" placeholder="Creatinine value">
 <select id="creatUnit">
 <option value="mgdl">mg/dL</option>
 <option value="umol">µmol/L</option>
 </select>
 
+<h3>Additional Labs (Optional)</h3>
+
 <input id="bun" placeholder="BUN (mg/dL)">
 <input id="sodium" placeholder="Sodium (mmol/L)">
 <input id="glucose" placeholder="Glucose (mg/dL)">
 
-<button onclick="analyzeRenal()">Calculate</button>
+<button onclick="analyzeRenal()">Calculate Renal Panel</button>
 
 </div>
 
 <div class="card">
+<h3>Renal Report</h3>
 <div id="renalOutput"></div>
 </div>
 
 <div class="card">
+<h3>eGFR Comparison</h3>
 <canvas id="renalChart"></canvas>
 </div>
 
