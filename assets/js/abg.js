@@ -6,6 +6,12 @@ if(value > high) return "#f59e0b";
 return "#22c55e";
 }
 
+function severityGrade(ph){
+if(ph < 7.1 || ph > 7.6) return "Severe";
+if(ph < 7.2 || ph > 7.55) return "Moderate";
+return "Mild";
+}
+
 function analyzeABG(){
 
 let ph = parseFloat(document.getElementById("ph").value);
@@ -45,9 +51,8 @@ else if(ph > 7.45 && pco2 < 35){
 primary = "Respiratory Alkalosis";
 }
 
-/* Compensation Check */
+/* Compensation */
 let compensation = "Appropriate";
-
 if(primary === "Metabolic Acidosis"){
 if(pco2 < winterExpected - 2){
 compensation = "Concurrent Respiratory Alkalosis";
@@ -57,7 +62,7 @@ compensation = "Concurrent Respiratory Acidosis";
 }
 }
 
-/* Delta Ratio Interpretation */
+/* Delta Interpretation */
 let deltaInterpretation = "";
 if(deltaRatio < 0.4){
 deltaInterpretation = "Normal Anion Gap Acidosis Present";
@@ -69,28 +74,32 @@ else{
 deltaInterpretation = "Concurrent Metabolic Alkalosis";
 }
 
-/* Reference Colors */
+/* Severity */
+let severity = severityGrade(ph);
+
+/* Colors */
 let phColor = getColor(ph,7.35,7.45);
 let pco2Color = getColor(pco2,35,45);
 let hco3Color = getColor(hco3,22,26);
 let agColor = getColor(ag,8,12);
 
-/* Output */
+/* Report Layout */
 let outputHTML = `
-<div style="font-size:20px;color:#38bdf8;font-weight:bold;margin-bottom:10px;">
-${primary}
+<div style="background:#0f172a;padding:15px;border-radius:10px;margin-bottom:15px;">
+<div style="font-size:22px;color:#38bdf8;font-weight:bold;">${primary}</div>
+<div style="margin-top:5px;">Severity: <b>${severity}</b></div>
+<div>Compensation: ${compensation}</div>
+<div>Delta Ratio: ${deltaRatio.toFixed(2)}</div>
+<div>${deltaInterpretation}</div>
 </div>
 
-<p><b>Compensation:</b> ${compensation}</p>
-<p><b>Delta Ratio:</b> ${deltaRatio.toFixed(2)}</p>
-<p><b>Delta Interpretation:</b> ${deltaInterpretation}</p>
-<hr>
-
+<div style="background:#1e293b;padding:15px;border-radius:10px;">
 <p>pH: <span style="color:${phColor};font-weight:bold;">${ph}</span> (7.35–7.45)</p>
 <p>pCO₂: <span style="color:${pco2Color};font-weight:bold;">${pco2}</span> (35–45)</p>
 <p>HCO₃: <span style="color:${hco3Color};font-weight:bold;">${hco3}</span> (22–26)</p>
 <p>Anion Gap: <span style="color:${agColor};font-weight:bold;">${ag.toFixed(2)}</span> (8–12)</p>
 <p>Corrected AG: ${correctedAG.toFixed(2)}</p>
+</div>
 `;
 
 document.getElementById("output").innerHTML = outputHTML;
