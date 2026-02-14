@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Complete Renal Analytical Suite</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="assets/css/style.css">
+<script defer src="assets/js/renal.js"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Complete Renal Analytical Engine</h1>
+
+<div class="card">
+<h3>Patient Data</h3>
+
+<input id="age" placeholder="Age (years)">
+<input id="weight" placeholder="Weight (kg)">
+<select id="sex">
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
+
+<h3>Serum Values</h3>
+
+<input id="creatinine" placeholder="Creatinine">
+<select id="creatUnit">
+<option value="mgdl">mg/dL</option>
+<option value="umol">µmol/L</option>
+</select>
+
+<input id="bun" placeholder="BUN (mg/dL)">
+<input id="sodium" placeholder="Sodium (mmol/L)">
+<input id="glucose" placeholder="Glucose (mg/dL)">
+<input id="albumin" placeholder="Albumin (g/dL)">
+
+<h3>Urine Values (Optional)</h3>
+
+<input id="urineNa" placeholder="Urine Na (mmol/L)">
+<input id="urineCr" placeholder="Urine Creatinine (mg/dL)">
+<input id="urineUrea" placeholder="Urine Urea (mg/dL)">
+
+<button onclick="analyzeRenal()">Calculate Full Panel</button>
+
+</div>
+
+<div class="card">
+<h3>Renal Report</h3>
+<div id="renalOutput"></div>
+</div>
+
+</div>
+
+</body>
+</html>
