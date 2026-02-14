@@ -5,15 +5,15 @@ function analyzeRenal(){
 let age = parseFloat(document.getElementById("age").value);
 let weight = parseFloat(document.getElementById("weight").value);
 let sex = document.getElementById("sex").value;
-
 let creatinine = parseFloat(document.getElementById("creatinine").value);
 let unit = document.getElementById("creatUnit").value;
 
 if(isNaN(age) || isNaN(creatinine)){
-alert("Age and Creatinine required");
+alert("Age and Creatinine are required.");
 return;
 }
 
+/* Unit Handling */
 if(unit === "umol"){
 creatinine = creatinine / 88.4;
 }
@@ -38,11 +38,10 @@ Math.pow(age, -0.203) *
 (sex === "female" ? 0.742 : 1);
 
 /* Cockcroft–Gault */
-let crcl = "Weight required";
+let crcl = null;
 if(!isNaN(weight)){
-let temp = ((140 - age) * weight) / (72 * creatinine);
-if(sex === "female"){ temp *= 0.85; }
-crcl = temp.toFixed(1);
+crcl = ((140 - age) * weight) / (72 * creatinine);
+if(sex === "female"){ crcl *= 0.85; }
 }
 
 /* BIS-1 */
@@ -52,22 +51,54 @@ Math.pow(creatinine, -0.87) *
 Math.pow(age, -0.95) *
 (sex === "female" ? 0.82 : 1);
 
-/* Stage */
+/* CKD Stage */
 function stage(gfr){
-if(gfr >= 90) return "G1";
-if(gfr >= 60) return "G2";
+if(gfr >= 90) return "G1 (Normal)";
+if(gfr >= 60) return "G2 (Mild)";
 if(gfr >= 45) return "G3a";
 if(gfr >= 30) return "G3b";
-if(gfr >= 15) return "G4";
-return "G5";
+if(gfr >= 15) return "G4 (Severe)";
+return "G5 (Kidney Failure)";
 }
 
+/* Stage Color */
+function stageColor(gfr){
+if(gfr >= 90) return "#22c55e";
+if(gfr >= 60) return "#84cc16";
+if(gfr >= 45) return "#facc15";
+if(gfr >= 30) return "#f97316";
+if(gfr >= 15) return "#ef4444";
+return "#7f1d1d";
+}
+
+/* Clinical Interpretation */
+let interpretation = `
+Estimated renal function using multiple equations.
+CKD-EPI 2021 is recommended for routine reporting.
+Stage classification based on KDIGO guidelines.
+`;
+
 /* Output */
-document.getElementById("renalOutput").innerHTML =
-"<h2>CKD-EPI 2021: " + egfr_ckd.toFixed(1) + " (" + stage(egfr_ckd) + ")</h2>" +
-"<p>MDRD: " + egfr_mdrd.toFixed(1) + "</p>" +
-"<p>Cockcroft–Gault: " + crcl + "</p>" +
-"<p>BIS-1: " + egfr_bis.toFixed(1) + "</p>";
+let outputHTML = `
+<div style="background:${stageColor(egfr_ckd)};padding:18px;border-radius:12px;color:white;margin-bottom:15px;">
+<div style="font-size:22px;font-weight:bold;">
+CKD-EPI 2021: ${egfr_ckd.toFixed(1)} mL/min/1.73m²
+</div>
+<div>Stage: ${stage(egfr_ckd)}</div>
+</div>
+
+<div style="background:#1e293b;padding:15px;border-radius:12px;margin-bottom:15px;color:white;">
+<p><b>MDRD:</b> ${egfr_mdrd.toFixed(1)} mL/min/1.73m²</p>
+<p><b>Cockcroft–Gault:</b> ${crcl ? crcl.toFixed(1) + " mL/min" : "Weight required"}</p>
+<p><b>BIS-1:</b> ${egfr_bis.toFixed(1)} mL/min/1.73m²</p>
+</div>
+
+<div style="background:#0f172a;padding:15px;border-radius:12px;color:white;">
+<p>${interpretation}</p>
+</div>
+`;
+
+document.getElementById("renalOutput").innerHTML = outputHTML;
 
 /* Chart */
 if(renalChartInstance !== null){
@@ -81,17 +112,30 @@ type:'bar',
 data:{
 labels:['CKD-EPI','MDRD','Cockcroft','BIS-1'],
 datasets:[{
-label:'Renal Comparison',
+label:'Renal Function Comparison',
 data:[
 egfr_ckd,
 egfr_mdrd,
-(crcl === "Weight required") ? 0 : parseFloat(crcl),
+crcl ? crcl : 0,
 egfr_bis
 ],
-backgroundColor:['#38bdf8','#84cc16','#facc15','#f97316']
+backgroundColor:[
+'#38bdf8',
+'#84cc16',
+'#facc15',
+'#f97316'
+]
 }]
 },
-options:{responsive:true}
+options:{
+responsive:true,
+plugins:{
+legend:{labels:{color:'white'}}
+},
+scales:{
+y:{beginAtZero:true}
+}
+}
 });
 
 }
